@@ -5,6 +5,7 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
   import Icon from '../../ui/Icon.svelte';
+  import mark from '../../assets/mark.png';
   import type { IconName } from '../../ui/icons';
 
   let {
@@ -23,7 +24,7 @@
 
 <aside>
   <header>
-    <span class="logo"><Icon name="exchange" size={20} stroke={2} /></span>
+    <img class="logo" src={mark} alt="" width="30" height="20" />
     <span class="name">API Studio</span>
   </header>
 
@@ -53,7 +54,7 @@
 <style>
   aside { display: flex; flex-direction: column; background: var(--surface); border-right: 1px solid var(--border); min-height: 0; }
   header { display: flex; align-items: center; gap: 10px; padding: 14px 16px 10px; }
-  .logo { color: var(--accent); display: flex; }
+  .logo { display: block; object-fit: contain; }
   .name { font-weight: 600; font-size: var(--text-lg); letter-spacing: -0.01em; }
   nav { display: flex; flex-direction: column; gap: 1px; padding: 6px 8px 10px; border-bottom: 1px solid var(--border); }
   nav button { display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--radius); color: var(--text-2); text-align: left; transition: background var(--dur-fast), color var(--dur-fast); }
