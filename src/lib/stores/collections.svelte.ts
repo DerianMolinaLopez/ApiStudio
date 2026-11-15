@@ -148,7 +148,7 @@ export async function renameNode(path: string, name: string): Promise<void> {
 export async function deleteNode(path: string): Promise<void> {
   try {
     await workspace.remove(path);
-    for (const t of [...tabs.items]) if (t.ref === path || t.ref?.startsWith(path + '/')) closeTab(t.id);
+    tabs.items.filter((t) => t.ref === path || t.ref?.startsWith(path + '/')).forEach((t) => closeTab(t.id));
     await loadCollections();
   } catch (e) {
     fail(e);
@@ -181,13 +181,14 @@ export async function importCollection(c: ImportedCollection): Promise<void> {
   await loadCollections();
 }
 
-async function readNodes(nodes: TreeNode[]): Promise<ImportNode[]> {
-  const out: ImportNode[] = [];
-  for (const n of nodes) {
-    if (n.kind === 'folder') out.push({ type: 'folder', name: n.name, children: await readNodes(n.children) });
-    else out.push({ type: 'request', name: n.name, request: { ...hydrate(await workspace.readRequest(n.path)), name: n.name } });
-  }
-  return out;
+function readNodes(nodes: TreeNode[]): Promise<ImportNode[]> {
+  return Promise.all(
+    nodes.map(async (n): Promise<ImportNode> =>
+      n.kind === 'folder'
+        ? { type: 'folder', name: n.name, children: await readNodes(n.children) }
+        : { type: 'request', name: n.name, request: { ...hydrate(await workspace.readRequest(n.path)), name: n.name } },
+    ),
+  );
 }
 
 /** Exporta una colección completa como JSON de Postman v2.1. */

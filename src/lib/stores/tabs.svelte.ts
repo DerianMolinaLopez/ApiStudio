@@ -24,12 +24,19 @@ export interface Tab {
   scriptError: string | null;
 }
 
+/** Error de script; lleva `kind` para que toAppError lo reconozca. */
+class ScriptError extends Error {
+  readonly kind = 'script' as const;
+}
+
 export const tabs = $state<{ items: Tab[]; activeId: string | null }>({ items: [], activeId: null });
 
 type SentListener = (tab: Tab, sent: EngineRequest, res: EngineResponse | null, err: AppError | null) => void;
 const listeners: SentListener[] = [];
 /** Permite a otros módulos (historial) reaccionar a cada envío. */
-export const onSent = (fn: SentListener) => void listeners.push(fn);
+export const onSent = (fn: SentListener) => {
+  listeners.push(fn);
+};
 
 export const snapshot = (r: RequestModel) => JSON.stringify($state.snapshot(r));
 
@@ -77,6 +84,15 @@ export function buildFor(tab: Tab, execId?: string): EngineRequest {
   });
 }
 
+async function runPostScript(tab: Tab, code: string, response: EngineResponse): Promise<void> {
+  if (!code.trim()) return;
+  const out = await runInWorker(code, { vars: activeVars(), response });
+  tab.logs.push(...out.logs);
+  tab.tests.push(...out.tests);
+  setVars(out.varChanges);
+  if (!out.ok) tab.scriptError = out.error ?? 'Error desconocido';
+}
+
 export async function send(tab: Tab): Promise<void> {
   if (tab.loading) return;
   const execId = uid();
@@ -94,7 +110,7 @@ export async function send(tab: Tab): Promise<void> {
       tab.logs.push(...out.logs);
       setVars(out.varChanges);
       extraHeaders.push(...out.headers);
-      if (!out.ok) throw { kind: 'script', message: `Error en el script pre-request: ${out.error}` } satisfies AppError;
+      if (!out.ok) throw new ScriptError(`Error en el script pre-request: ${out.error}`);
     }
     sent = buildFor(tab, execId);
     sent.headers.push(...extraHeaders);
@@ -102,14 +118,8 @@ export async function send(tab: Tab): Promise<void> {
     res = await engine.send(sent);
     tab.response = res;
 
-    for (const code of [r.postScript, r.tests]) {
-      if (!code.trim()) continue;
-      const out = await runInWorker(code, { vars: activeVars(), response: res });
-      tab.logs.push(...out.logs);
-      tab.tests.push(...out.tests);
-      setVars(out.varChanges);
-      if (!out.ok) tab.scriptError = out.error ?? 'Error desconocido';
-    }
+    await runPostScript(tab, r.postScript, res);
+    await runPostScript(tab, r.tests, res);
   } catch (e) {
     err = toAppError(e);
     if (err.kind !== 'cancelled') {
