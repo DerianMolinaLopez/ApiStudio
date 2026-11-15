@@ -1,0 +1,131 @@
+/* Graphite & Electric Violet — tokens de diseño.
+   Nunca usar colores sueltos en componentes: siempre var(--token). */
+
+:root {
+  /* Acento (sobrescrito por [data-accent]) */
+  --accent: #a78bfa;
+  --accent-hover: #c4b5fd;
+  --accent-contrast: #17191f;
+  --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
+  --accent-line: color-mix(in srgb, var(--accent) 45%, transparent);
+
+  /* Tipografía */
+  --font-ui: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Fira Code', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --editor-font-size: 13px;
+
+  /* Escala */
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-md: 13px;
+  --text-lg: 15px;
+  --text-xl: 20px;
+
+  /* Espaciado y formas */
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --gap: 8px;
+  --row-h: 30px;
+
+  /* Movimiento */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 100ms;
+  --dur: 160ms;
+
+  /* Semánticos fijos (no dependen del acento) */
+  --ok: #6ee7b7;
+  --info: #7dd3fc;
+  --warn: #fbbf24;
+  --danger: #f87171;
+
+  --m-get: #6ee7b7;
+  --m-post: #fbbf24;
+  --m-put: #60a5fa;
+  --m-patch: #fb923c;
+  --m-delete: #f87171;
+  --m-head: #969caa;
+  --m-options: #969caa;
+
+  /* Sintaxis del editor */
+  --syn-key: var(--accent-hover);
+  --syn-string: var(--ok);
+  --syn-number: var(--warn);
+  --syn-atom: var(--info);
+  --syn-punct: var(--text-3);
+  --syn-comment: var(--text-3);
+
+  /* Muestras del selector de acento (siempre los tonos oscuros) */
+  --swatch-violet: #a78bfa;
+  --swatch-blue: #60a5fa;
+  --swatch-teal: #2dd4bf;
+  --swatch-green: #4ade80;
+  --swatch-amber: #fbbf24;
+  --swatch-red: #f87171;
+  --swatch-pink: #f472b6;
+}
+
+/* ── Dark (por defecto) ───────────────────────── */
+:root,
+[data-scheme='dark'] {
+  color-scheme: dark;
+  --bg: #17191f;
+  --surface: #20232c;
+  --elevated: #292d38;
+  --hover: #303543;
+  --border: #2b2f3b;
+  --border-strong: #3a3f4e;
+  --text: #f1f2f6;
+  --text-2: #969caa;
+  --text-3: #6b7080;
+  --editor-bg: #1b1d24;
+  --shadow: 0 6px 20px rgb(0 0 0 / 0.35);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
+  --scrim: rgb(10 11 14 / 0.6);
+}
+
+/* ── Light ────────────────────────────────────── */
+[data-scheme='light'] {
+  color-scheme: light;
+  --bg: #eeedf4;
+  --surface: #f7f7fb;
+  --elevated: #ffffff;
+  --hover: #e6e5ef;
+  --border: #dcdbe6;
+  --border-strong: #c6c5d4;
+  --text: #1c1e27;
+  --text-2: #5f6477;
+  --text-3: #8a8fa1;
+  --editor-bg: #fbfbfd;
+  --shadow: 0 6px 20px rgb(40 36 70 / 0.12);
+  --shadow-sm: 0 1px 2px rgb(40 36 70 / 0.1);
+  --scrim: rgb(30 28 50 / 0.35);
+  --ok: #0f9b6c;
+  --info: #0b78b5;
+  --warn: #b7791f;
+  --danger: #d63e3e;
+  --m-get: #0f9b6c;
+  --m-post: #b7791f;
+  --m-put: #2563eb;
+  --m-patch: #c2570c;
+  --m-delete: #d63e3e;
+  --m-head: #5f6477;
+  --m-options: #5f6477;
+}
+
+/* ── Acentos (variantes por esquema) ──────────── */
+:root[data-accent='violet'] { --accent: #a78bfa; --accent-hover: #c4b5fd; }
+:root[data-accent='blue']   { --accent: #60a5fa; --accent-hover: #93c5fd; }
+:root[data-accent='teal']   { --accent: #2dd4bf; --accent-hover: #5eead4; }
+:root[data-accent='green']  { --accent: #4ade80; --accent-hover: #86efac; }
+:root[data-accent='amber']  { --accent: #fbbf24; --accent-hover: #fcd34d; }
+:root[data-accent='red']    { --accent: #f87171; --accent-hover: #fca5a5; }
+:root[data-accent='pink']   { --accent: #f472b6; --accent-hover: #f9a8d4; }
+
+:root[data-scheme='light'][data-accent='violet'] { --accent: #7c5ce6; --accent-hover: #6a47d9; --accent-contrast: #fff; }
+:root[data-scheme='light'][data-accent='blue']   { --accent: #2563eb; --accent-hover: #1d4ed8; --accent-contrast: #fff; }
+:root[data-scheme='light'][data-accent='teal']   { --accent: #0d9488; --accent-hover: #0f766e; --accent-contrast: #fff; }
+:root[data-scheme='light'][data-accent='green']  { --accent: #16a34a; --accent-hover: #15803d; --accent-contrast: #fff; }
+:root[data-scheme='light'][data-accent='amber']  { --accent: #d97706; --accent-hover: #b45309; --accent-contrast: #fff; }
+:root[data-scheme='light'][data-accent='red']    { --accent: #dc2626; --accent-hover: #b91c1c; --accent-contrast: #fff; }
+:root[data-scheme='light'][data-accent='pink']   { --accent: #db2777; --accent-hover: #be185d; --accent-contrast: #fff; }
