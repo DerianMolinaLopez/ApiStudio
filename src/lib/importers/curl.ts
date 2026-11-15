@@ -40,28 +40,32 @@ export function tokenize(input: string): string[] {
     cur = '';
     has = false;
   };
-  for (let i = 0; i < s.length; i++) {
+  let i = 0;
+  while (i < s.length) {
     const c = s[i];
+    let next = i + 1;
     if (c === "'" || (c === '$' && s[i + 1] === "'")) {
       const ansi = c === '$';
       const [text, end] = readSingleQuoted(s, i + (ansi ? 2 : 1), ansi);
       cur += text;
       has = true;
-      i = end;
+      next = end + 1;
     } else if (c === '"') {
       const [text, end] = readDoubleQuoted(s, i + 1);
       cur += text;
       has = true;
-      i = end;
+      next = end + 1;
     } else if (c === '\\' && i + 1 < s.length) {
-      cur += s[++i];
+      cur += s[i + 1];
       has = true;
+      next = i + 2;
     } else if (/\s/.test(c)) {
       flush();
     } else {
       cur += c;
       has = true;
     }
+    i = next;
   }
   flush();
   return out;
@@ -136,17 +140,20 @@ const IGNORED_WITH_VALUE = new Set([
 
 function parseArgs(t: string[]): CurlArgs {
   const a: CurlArgs = { method: null, url: '', headers: [], data: [], urlencoded: [], form: [], user: null, head: false, getMode: false };
-  for (let i = 1; i < t.length; i++) {
-    const flag = t[i];
+  const args = t.slice(1);
+  let idx = 0;
+  const take = () => args[idx++] ?? '';
+  while (idx < args.length) {
+    const flag = take();
     if (!flag.startsWith('-')) {
       a.url ||= flag;
       continue;
     }
     const withValue = VALUE_FLAGS[flag];
-    if (withValue) withValue(a, t[++i] ?? '');
+    if (withValue) withValue(a, take());
     else if (flag.startsWith('-X') && flag.length > 2) setMethod(a, flag.slice(2));
     else if (SWITCH_FLAGS[flag]) SWITCH_FLAGS[flag](a);
-    else if (IGNORED_WITH_VALUE.has(flag)) i++;
+    else if (IGNORED_WITH_VALUE.has(flag)) take();
     // el resto (-s, -L, -k, --compressed…) no afecta a la solicitud
   }
   return a;
@@ -154,8 +161,7 @@ function parseArgs(t: string[]): CurlArgs {
 
 // ── Construcción de la solicitud ────────────────────────────────────────
 function inferMethod(a: CurlArgs, hasBody: boolean): Method {
-  let m = a.method;
-  if (m === null) m = a.head ? 'HEAD' : defaultMethod(hasBody && !a.getMode);
+  const m = a.method ?? (a.head ? 'HEAD' : defaultMethod(hasBody && !a.getMode));
   return METHODS.includes(m as Method) ? (m as Method) : 'GET';
 }
 const defaultMethod = (sendsBody: boolean) => (sendsBody ? 'POST' : 'GET');
