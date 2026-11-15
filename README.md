@@ -24,12 +24,13 @@ ApiStudio sirve para desarrollar y probar APIs sin depender de un servicio exter
 
 | Sistema | Archivo | Instalar |
 | --- | --- | --- |
-| Fedora / RHEL / openSUSE | [`ApiStudio-0.1.1-1.x86_64.rpm`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.1/ApiStudio-0.1.1-1.x86_64.rpm) | `sudo dnf install ./ApiStudio-0.1.1-1.x86_64.rpm` |
-| Debian / Ubuntu | [`ApiStudio_0.1.1_amd64.deb`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.1/ApiStudio_0.1.1_amd64.deb) | `sudo apt install ./ApiStudio_0.1.1_amd64.deb` |
+| Fedora / RHEL / openSUSE | [`ApiStudio-0.1.2-1.x86_64.rpm`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.2/ApiStudio-0.1.2-1.x86_64.rpm) | `sudo dnf install ./ApiStudio-0.1.2-1.x86_64.rpm` |
+| Windows 10/11 | Instalador `.exe` (o `.msi`) en [Releases](https://github.com/DerianMolinaLopez/ApiStudio/releases/latest) | Doble clic. Se instala para tu usuario, sin permisos de administrador |
+| Debian / Ubuntu | [`ApiStudio_0.1.2_amd64.deb`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.2/ApiStudio_0.1.2_amd64.deb) | `sudo apt install ./ApiStudio_0.1.2_amd64.deb` |
 
 Después abre **ApiStudio** desde el menú de aplicaciones o ejecuta `api-studio`.
 
-> Los paquetes no están firmados. Windows y macOS todavía no tienen binario: por ahora se compila desde el código (ver [Ejecutarlo desde el código](#ejecutarlo-desde-el-código)).
+> Los paquetes no están firmados: en Windows, SmartScreen puede mostrar «Windows protegió su PC»; elige *Más información → Ejecutar de todas formas*. macOS todavía no tiene binario: por ahora se compila desde el código (ver [Ejecutarlo desde el código](#ejecutarlo-desde-el-código)).
 
 ## Qué puedes hacer
 
@@ -66,7 +67,7 @@ Atajos: `Ctrl+Enter` enviar · `Ctrl+S` guardar · `Ctrl+T` nueva pestaña · `C
 Todo es local. Esto es lo que se guarda y dónde:
 
 ```
-~/Documentos/API Studio/
+~/Documentos/API Studio/        (Windows: Documentos\API Studio)
   collections/<colección>/<carpeta>/<solicitud>.json
   environments/<entorno>.json
 ```
@@ -79,7 +80,7 @@ Detalle completo y cómo reportar una vulnerabilidad en [SECURITY.md](SECURITY.m
 
 ## Ejecutarlo desde el código
 
-Requisitos: Node 20+, Rust estable y las [dependencias de Tauri 2](https://v2.tauri.app/start/prerequisites/) (en Linux: `webkit2gtk-4.1` y `libsoup-3.0`).
+Requisitos: Node 20+, Rust estable y las [dependencias de Tauri 2](https://v2.tauri.app/start/prerequisites/) (en Linux: `webkit2gtk-4.1` y `libsoup-3.0`; en Windows: *Microsoft C++ Build Tools* y WebView2, que ya viene en Windows 10/11).
 
 ```bash
 git clone https://github.com/DerianMolinaLopez/ApiStudio.git
@@ -126,7 +127,7 @@ src-tauri/src/           Backend (Rust)
 
 ## Roadmap
 
-GraphQL, WebSocket, gRPC y SSE · OAuth 2.0 · mock servers · Collection Runner · proxy · imágenes y respuestas binarias · binarios para Windows y macOS · cifrar secretos en disco.
+GraphQL, WebSocket, gRPC y SSE · OAuth 2.0 · mock servers · Collection Runner · proxy · imágenes y respuestas binarias · binarios para macOS y firma de los instaladores · cifrar secretos en disco.
 
 ## Licencia
 
