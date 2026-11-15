@@ -24,8 +24,8 @@ ApiStudio sirve para desarrollar y probar APIs sin depender de un servicio exter
 
 | Sistema | Archivo | Instalar |
 | --- | --- | --- |
-| Fedora / RHEL / openSUSE | [`ApiStudio-0.1.0-1.x86_64.rpm`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.0/ApiStudio-0.1.0-1.x86_64.rpm) | `sudo dnf install ./ApiStudio-0.1.0-1.x86_64.rpm` |
-| Debian / Ubuntu | [`ApiStudio_0.1.0_amd64.deb`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.0/ApiStudio_0.1.0_amd64.deb) | `sudo apt install ./ApiStudio_0.1.0_amd64.deb` |
+| Fedora / RHEL / openSUSE | [`ApiStudio-0.1.1-1.x86_64.rpm`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.1/ApiStudio-0.1.1-1.x86_64.rpm) | `sudo dnf install ./ApiStudio-0.1.1-1.x86_64.rpm` |
+| Debian / Ubuntu | [`ApiStudio_0.1.1_amd64.deb`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.1/ApiStudio_0.1.1_amd64.deb) | `sudo apt install ./ApiStudio_0.1.1_amd64.deb` |
 
 Después abre **ApiStudio** desde el menú de aplicaciones o ejecuta `api-studio`.
 
