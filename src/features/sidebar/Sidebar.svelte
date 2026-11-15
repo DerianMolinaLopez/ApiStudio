@@ -23,7 +23,7 @@
 
 <aside>
   <header>
-    <span class="logo"><Icon name="bolt" size={20} stroke={2} /></span>
+    <span class="logo"><Icon name="exchange" size={20} stroke={2} /></span>
     <span class="name">API Studio</span>
   </header>
 

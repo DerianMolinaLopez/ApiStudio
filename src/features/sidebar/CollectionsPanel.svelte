@@ -23,7 +23,7 @@
 
   {#if collections.nodes.length === 0}
     <div class="empty">
-      <span class="mark"><Icon name="bolt" size={26} stroke={1.5} /></span>
+      <span class="mark"><Icon name="exchange" size={26} stroke={1.5} /></span>
       <strong>Organiza tus solicitudes</strong>
       <p>Crea colecciones para agrupar tus endpoints. Cada solicitud se guarda como un archivo JSON que puedes versionar con Git.</p>
       <button class="btn primary" onclick={create}>Crear colección</button>
