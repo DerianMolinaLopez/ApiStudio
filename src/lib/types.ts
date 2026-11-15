@@ -93,3 +93,19 @@ export interface AppError {
   kind: 'invalidRequest' | 'network' | 'timeout' | 'cancelled' | 'io' | 'storage';
   message: string;
 }
+
+// ── Workspace ───────────────────────────────────────────────────────────
+export type TreeNode =
+  | { kind: 'folder'; name: string; path: string; children: TreeNode[] }
+  | { kind: 'request'; name: string; path: string; method: Method };
+
+export interface HistoryEntry {
+  id: string;
+  ts: number;
+  method: Method;
+  url: string;
+  status: number;
+  timeMs: number;
+  sizeBytes: number;
+  request: RequestModel;
+}

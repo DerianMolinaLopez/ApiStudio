@@ -7,6 +7,7 @@
   import { paramsFromUrl, toCurl, urlWithParams } from '../../lib/request';
   import { activeVars } from '../../lib/stores/environments.svelte';
   import { buildFor, cancel, send, type Tab } from '../../lib/stores/tabs.svelte';
+  import { saveTab } from '../../lib/stores/collections.svelte';
   import { toast } from '../../lib/stores/toast.svelte';
 
   let { tab }: { tab: Tab } = $props();
@@ -50,6 +51,7 @@
     onsend={() => send(tab)}
     oncancel={() => cancel(tab)}
     oncurl={copyCurl}
+    onsave={() => saveTab(tab)}
   />
   <Tabs {items} bind:active={section} />
   <div class="content">

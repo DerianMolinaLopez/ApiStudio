@@ -39,6 +39,15 @@
   </nav>
 
   <div class="panel">{@render children()}</div>
+
+  <div class="tip">
+    <Icon name="star" size={14} />
+    <div>
+      <strong>Consejo</strong>
+      <p>Usa entornos para gestionar tus variables y cambiar de servidor con un clic.</p>
+      <button onclick={() => (view = 'environments')}>Ver entornos</button>
+    </div>
+  </div>
 </aside>
 
 <style>
@@ -53,4 +62,9 @@
   nav button.active { background: var(--accent-soft); color: var(--accent); }
   .count { min-width: 20px; padding: 0 6px; height: 18px; line-height: 18px; text-align: center; border-radius: 9px; background: var(--accent-soft); color: var(--accent); font-size: var(--text-xs); font-weight: 600; }
   .panel { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .tip { display: flex; gap: 10px; margin: 8px; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); color: var(--accent); }
+  .tip strong { color: var(--text); font-weight: 600; }
+  .tip p { margin: 2px 0 6px; color: var(--text-2); font-size: var(--text-sm); }
+  .tip button { color: var(--accent); font-size: var(--text-sm); }
+  .tip button:hover { color: var(--accent-hover); }
 </style>

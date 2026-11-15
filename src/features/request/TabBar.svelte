@@ -1,8 +1,13 @@
 <script lang="ts">
   import Icon from '../../ui/Icon.svelte';
+  import Select from '../../ui/Select.svelte';
+  import { envs, setActiveEnvironment } from '../../lib/stores/environments.svelte';
   import { closeTab, isDirty, newTab, tabs } from '../../lib/stores/tabs.svelte';
 
   let renaming = $state<string | null>(null);
+  let envValue = $state(envs.activeId ?? '');
+  $effect(() => { envValue = envs.activeId ?? ''; });
+  $effect(() => { if ((envValue || null) !== envs.activeId) setActiveEnvironment(envValue || null); });
   const short: Record<string, string> = { DELETE: 'DEL', OPTIONS: 'OPT' };
 
   function onaux(e: MouseEvent, id: string) {
@@ -48,6 +53,8 @@
     {/each}
   </div>
   <button class="icon-btn add" onclick={newTab} aria-label="Nueva solicitud" title="Nueva solicitud (Ctrl+T)"><Icon name="plus" size={16} /></button>
+  <span class="grow"></span>
+  <span class="env" title="Entorno activo"><Select bind:value={envValue} options={[{ value: '', label: 'Sin entorno' }, ...envs.items.map((e) => ({ value: e.id, label: e.name }))]} width={150} ariaLabel="Entorno activo" /></span>
 </div>
 
 <style>
@@ -64,5 +71,8 @@
   .x { width: 20px; height: 20px; display: grid; place-items: center; border-radius: var(--radius-sm); color: var(--text-3); opacity: 0; }
   .tab:hover .x, .tab.active .x, .x:focus-visible { opacity: 1; }
   .x:hover { background: var(--elevated); color: var(--text); }
+  .grow { flex: 1; }
+  .env { margin-bottom: 4px; flex: none; }
+  .env :global(select) { height: 26px; font-size: var(--text-sm); }
   .add { margin-bottom: 5px; flex: none; }
 </style>
