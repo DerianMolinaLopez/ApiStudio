@@ -3,6 +3,7 @@
   import UrlBar from './UrlBar.svelte';
   import KeyValueEditor from './KeyValueEditor.svelte';
   import BodyEditor from './BodyEditor.svelte';
+  import ScriptsEditor from './ScriptsEditor.svelte';
   import AuthEditor from './AuthEditor.svelte';
   import { paramsFromUrl, toCurl, urlWithParams } from '../../lib/request';
   import { activeVars } from '../../lib/stores/environments.svelte';
@@ -22,6 +23,7 @@
     { id: 'headers', label: 'Headers', badge: count(r.headers) },
     { id: 'body', label: 'Body', badge: r.body.mode !== 'none' ? '•' : null },
     { id: 'auth', label: 'Authorization', badge: r.auth.type !== 'none' ? '•' : null },
+    { id: 'scripts', label: 'Scripts', badge: r.preScript.trim() || r.postScript.trim() || r.tests.trim() ? '•' : null },
   ]);
 
   // La URL es la fuente de verdad de la query: la tabla se sincroniza en ambos sentidos.
@@ -61,6 +63,8 @@
       <div class="scroll"><KeyValueEditor bind:items={r.headers} addLabel="Añadir cabecera" /></div>
     {:else if section === 'body'}
       <BodyEditor bind:body={r.body} {vars} />
+    {:else if section === 'scripts'}
+      <ScriptsEditor bind:req={tab.request} />
     {:else}
       <div class="scroll"><AuthEditor bind:auth={r.auth} /></div>
     {/if}

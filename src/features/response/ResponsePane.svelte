@@ -15,14 +15,17 @@
   const tone = $derived(!res ? '' : res.status < 300 ? 'ok' : res.status < 400 ? 'info' : res.status < 500 ? 'warn' : 'danger');
   const lang = $derived(res ? detectLang(headerValue(res.headers, 'content-type'), res.body) : 'text');
   const shown = $derived(!res ? '' : view === 'pretty' ? pretty(res.body, lang) : res.body);
+  const passed = $derived(tab.tests.filter((t) => t.passed).length);
   const tabs = $derived([
     { id: 'body', label: 'Body' },
     { id: 'headers', label: 'Headers', badge: res?.headers.length || null },
     { id: 'cookies', label: 'Cookies', badge: res?.cookies.length || null },
+    { id: 'tests', label: 'Tests', badge: tab.tests.length ? `${passed}/${tab.tests.length}` : null },
   ]);
 
   const errorTitle: Record<string, string> = {
     network: 'No se pudo completar la solicitud',
+    script: 'Falló el script',
     timeout: 'La solicitud tardó demasiado',
     invalidRequest: 'La solicitud no es válida',
     io: 'No se pudo leer un archivo',
@@ -101,6 +104,24 @@
           </tbody>
         </table>
       </div>
+    {:else if section === 'tests'}
+      <div class="view scroll tests">
+        {#if tab.scriptError}<p class="note bad" role="alert">Error en el script: {tab.scriptError}</p>{/if}
+        {#if tab.tests.length === 0 && !tab.scriptError}
+          <p class="note">Esta solicitud no tiene tests. Agrégalos en Scripts → Tests.</p>
+        {/if}
+        {#each tab.tests as t}
+          <div class="t" class:fail={!t.passed}>
+            <Icon name={t.passed ? 'check-circle' : 'alert-circle'} size={15} />
+            <span class="tn">{t.name}</span>
+            {#if t.error}<span class="te">{t.error}</span>{/if}
+          </div>
+        {/each}
+        {#if tab.logs.length}
+          <h4>Consola</h4>
+          <pre>{tab.logs.join('\n')}</pre>
+        {/if}
+      </div>
     {:else}
       <div class="view scroll">
         {#if res.cookies.length === 0}
@@ -151,6 +172,14 @@
   thead th { color: var(--text-2); font-weight: 500; position: sticky; top: 0; background: var(--surface); }
   .mono { font-family: var(--font-mono); }
 
+  .t { display: grid; grid-template-columns: 20px auto 1fr; gap: 8px; align-items: baseline; padding: 8px 14px; border-bottom: 1px solid var(--border); color: var(--ok); }
+  .t :global(svg) { align-self: center; }
+  .t.fail { color: var(--danger); }
+  .tn { color: var(--text); }
+  .te { color: var(--text-2); font-size: var(--text-sm); font-family: var(--font-mono); }
+  .note.bad { color: var(--danger); }
+  h4 { margin: 14px 14px 6px; font-size: var(--text-sm); color: var(--text-2); font-weight: 600; }
+  pre { margin: 0 14px 14px; padding: 10px 12px; background: var(--editor-bg); border: 1px solid var(--border); border-radius: var(--radius); font: 400 var(--text-sm) / 1.5 var(--font-mono); user-select: text; white-space: pre-wrap; }
   .state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 24px; text-align: center; color: var(--text-2); }
   .state h3 { margin: 6px 0 0; color: var(--text); font-size: var(--text-lg); font-weight: 600; }
   .state p { margin: 0; max-width: 56ch; }

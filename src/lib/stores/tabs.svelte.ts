@@ -2,7 +2,9 @@ import { uid } from '../id';
 import { buildEngineRequest, newRequest } from '../request';
 import { engine, toAppError } from '../tauri';
 import type { AppError, EngineRequest, EngineResponse, RequestModel } from '../types';
-import { activeVars } from './environments.svelte';
+import { runInWorker } from '../scripting';
+import type { TestResult } from '../scriptCore';
+import { activeVars, setVars } from './environments.svelte';
 import { settings } from './settings.svelte';
 
 export interface Tab {
@@ -17,6 +19,9 @@ export interface Tab {
   response: EngineResponse | null;
   sent: EngineRequest | null;
   error: AppError | null;
+  tests: TestResult[];
+  logs: string[];
+  scriptError: string | null;
 }
 
 export const tabs = $state<{ items: Tab[]; activeId: string | null }>({ items: [], activeId: null });
@@ -38,7 +43,7 @@ export function openRequest(request: RequestModel, ref: string | null = null): T
     tabs.activeId = existing.id;
     return existing;
   }
-  const tab: Tab = { id: uid(), request, baseline: snapshot(request), ref, loading: false, execId: null, response: null, sent: null, error: null };
+  const tab: Tab = { id: uid(), request, baseline: snapshot(request), ref, loading: false, execId: null, response: null, sent: null, error: null, tests: [], logs: [], scriptError: null };
   tabs.items.push(tab);
   tabs.activeId = tab.id;
   return tab;
@@ -75,16 +80,36 @@ export function buildFor(tab: Tab, execId?: string): EngineRequest {
 export async function send(tab: Tab): Promise<void> {
   if (tab.loading) return;
   const execId = uid();
-  const sent = buildFor(tab, execId);
+  const r = tab.request;
   tab.loading = true;
   tab.execId = execId;
-  tab.error = null;
-  tab.sent = sent;
+  Object.assign(tab, { error: null, tests: [], logs: [], scriptError: null });
+  let sent: EngineRequest | null = null;
   let res: EngineResponse | null = null;
   let err: AppError | null = null;
   try {
+    const extraHeaders: { key: string; value: string }[] = [];
+    if (r.preScript.trim()) {
+      const out = await runInWorker(r.preScript, { vars: activeVars(), request: { method: r.method, url: r.url } });
+      tab.logs.push(...out.logs);
+      setVars(out.varChanges);
+      extraHeaders.push(...out.headers);
+      if (!out.ok) throw { kind: 'script', message: `Error en el script pre-request: ${out.error}` } satisfies AppError;
+    }
+    sent = buildFor(tab, execId);
+    sent.headers.push(...extraHeaders);
+    tab.sent = sent;
     res = await engine.send(sent);
     tab.response = res;
+
+    for (const code of [r.postScript, r.tests]) {
+      if (!code.trim()) continue;
+      const out = await runInWorker(code, { vars: activeVars(), response: res });
+      tab.logs.push(...out.logs);
+      tab.tests.push(...out.tests);
+      setVars(out.varChanges);
+      if (!out.ok) tab.scriptError = out.error ?? 'Error desconocido';
+    }
   } catch (e) {
     err = toAppError(e);
     if (err.kind !== 'cancelled') {
@@ -95,7 +120,7 @@ export async function send(tab: Tab): Promise<void> {
     tab.loading = false;
     tab.execId = null;
   }
-  if (err?.kind !== 'cancelled') listeners.forEach((fn) => fn(tab, sent, res, err));
+  if (sent && err?.kind !== 'cancelled') listeners.forEach((fn) => fn(tab, sent!, res, err));
 }
 
 export function cancel(tab: Tab): void {

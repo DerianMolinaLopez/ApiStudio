@@ -90,7 +90,7 @@ export interface EngineResponse {
 }
 
 export interface AppError {
-  kind: 'invalidRequest' | 'network' | 'timeout' | 'cancelled' | 'io' | 'storage';
+  kind: 'invalidRequest' | 'script' | 'network' | 'timeout' | 'cancelled' | 'io' | 'storage';
   message: string;
 }
 
