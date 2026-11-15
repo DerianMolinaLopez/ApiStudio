@@ -1,5 +1,7 @@
-import { newRequest } from './../request';
-import { toAppError, workspace } from '../tauri';
+import { save } from '@tauri-apps/plugin-dialog';
+import { exportPostmanCollection, type ImportNode, type ImportedCollection } from '../importers/postman';
+import { newRequest } from '../request';
+import { files, toAppError, workspace } from '../tauri';
 import type { RequestModel, TreeNode } from '../types';
 import { closeTab, markSaved, openRequest, snapshot, tabs, type Tab } from './tabs.svelte';
 import { toast } from './toast.svelte';
@@ -159,6 +161,43 @@ export async function moveNode(path: string, parent: string): Promise<void> {
     retarget(path, next);
     collections.expanded[parent] = true;
     await loadCollections();
+  } catch (e) {
+    fail(e);
+  }
+}
+
+// ── Importar / exportar ─────────────────────────────────────────────────
+async function writeImported(parent: string, nodes: ImportNode[]): Promise<void> {
+  for (const n of nodes) {
+    if (n.type === 'folder') await writeImported(await workspace.createFolder(parent, n.name), n.children);
+    else await workspace.createRequest(parent, n.name, n.request);
+  }
+}
+
+export async function importCollection(c: ImportedCollection): Promise<void> {
+  const root = await workspace.createFolder('', c.name);
+  await writeImported(root, c.children);
+  collections.expanded[root] = true;
+  await loadCollections();
+}
+
+async function readNodes(nodes: TreeNode[]): Promise<ImportNode[]> {
+  const out: ImportNode[] = [];
+  for (const n of nodes) {
+    if (n.kind === 'folder') out.push({ type: 'folder', name: n.name, children: await readNodes(n.children) });
+    else out.push({ type: 'request', name: n.name, request: { ...hydrate(await workspace.readRequest(n.path)), name: n.name } });
+  }
+  return out;
+}
+
+/** Exporta una colección completa como JSON de Postman v2.1. */
+export async function exportCollection(node: Extract<TreeNode, { kind: 'folder' }>): Promise<void> {
+  try {
+    const target = await save({ defaultPath: `${node.name}.postman_collection.json`, filters: [{ name: 'JSON', extensions: ['json'] }] });
+    if (!target) return;
+    const data = exportPostmanCollection({ name: node.name, children: await readNodes(node.children) });
+    await files.write(target, JSON.stringify(data, null, 2));
+    toast('Colección exportada');
   } catch (e) {
     fail(e);
   }

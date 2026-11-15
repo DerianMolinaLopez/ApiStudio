@@ -4,6 +4,8 @@
   import { askName } from '../../ui/dialogs.svelte';
   import { collections, createCollection } from '../../lib/stores/collections.svelte';
 
+  let { onimport }: { onimport: () => void } = $props();
+
   async function create() {
     const name = await askName('Nueva colección', '', 'Crear');
     if (name) await createCollection(name);
@@ -13,7 +15,10 @@
 <div class="panel">
   <header>
     <h2>Colecciones</h2>
-    <button class="btn primary" onclick={create}><Icon name="plus" size={14} /> Nueva</button>
+    <span class="acts">
+      <button class="icon-btn" onclick={onimport} title="Importar" aria-label="Importar"><Icon name="upload" size={15} /></button>
+      <button class="btn primary" onclick={create}><Icon name="plus" size={14} /> Nueva</button>
+    </span>
   </header>
 
   {#if collections.nodes.length === 0}
@@ -35,6 +40,7 @@
 <style>
   .panel { display: flex; flex-direction: column; min-height: 0; flex: 1; }
   header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px 8px; }
+  .acts { display: flex; align-items: center; gap: 6px; }
   h2 { margin: 0; font-size: var(--text-md); font-weight: 600; }
   header .btn { height: 26px; padding: 0 10px; }
   .tree { flex: 1; overflow: auto; padding-bottom: 12px; }

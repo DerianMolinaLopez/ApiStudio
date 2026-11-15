@@ -3,7 +3,7 @@
   import Icon from '../../ui/Icon.svelte';
   import Menu, { type MenuItem } from '../../ui/Menu.svelte';
   import { askConfirm, askName } from '../../ui/dialogs.svelte';
-  import { collections, createFolder, deleteNode, moveNode, newRequestIn, openSaved, renameNode } from '../../lib/stores/collections.svelte';
+  import { collections, createFolder, deleteNode, exportCollection, moveNode, newRequestIn, openSaved, renameNode } from '../../lib/stores/collections.svelte';
   import { activeTab } from '../../lib/stores/tabs.svelte';
   import type { TreeNode } from '../../lib/types';
 
@@ -21,6 +21,7 @@
           { label: 'Nueva solicitud', icon: 'plus', onclick: () => newRequestIn(node.path) },
           { label: 'Nueva carpeta', icon: 'folder-plus', onclick: rename0('Nueva carpeta', (n) => createFolder(node.path, n), '') },
           { label: 'Renombrar', icon: 'edit', onclick: rename0('Renombrar', (n) => renameNode(node.path, n), node.name) },
+          ...(depth === 0 ? [{ label: 'Exportar (Postman)', icon: 'download' as const, onclick: () => exportCollection(node) }] : []),
           { label: 'Eliminar', icon: 'trash', danger: true, onclick: remove },
         ]
       : [
