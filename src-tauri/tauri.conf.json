@@ -27,6 +27,9 @@
     "active": true,
     "targets": ["deb", "rpm", "appimage", "msi", "nsis"],
     "category": "DeveloperTool",
+    "license": "MIT",
+    "licenseFile": "../LICENSE",
+    "publisher": "Derian Molina Lopez",
     "shortDescription": "Cliente HTTP local y rápido",
     "longDescription": "Cliente HTTP de escritorio para desarrollo y pruebas de APIs. Sin nube, sin cuentas.",
     "icon": [
