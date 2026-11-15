@@ -14,6 +14,7 @@
     onsend,
     oncancel,
     oncurl,
+    onsave,
   }: {
     method: Method;
     url: string;
@@ -23,6 +24,7 @@
     onsend: () => void;
     oncancel: () => void;
     oncurl: () => void;
+    onsave: () => void;
   } = $props();
 
   let menu = $state(false);
@@ -46,6 +48,8 @@
   <div class="url">
     <CodeEditor bind:value={url} singleLine {vars} placeholder="https://api.ejemplo.com/v1/recurso" onsubmit={onsend} />
   </div>
+
+  <button class="btn" onclick={onsave} title="Guardar (Ctrl+S)" aria-label="Guardar solicitud"><Icon name="save" size={15} /></button>
 
   <div class="send">
     {#if loading}
@@ -73,6 +77,8 @@
   .url:hover { border-color: var(--border-strong); }
   .url:focus-within { border-color: var(--accent); }
   .url :global(.cm-editor) { background: transparent; }
+  .bar > .btn { height: 36px; width: 36px; padding: 0; color: var(--text-2); }
+  .bar > .btn:hover { color: var(--text); }
   .send { position: relative; display: flex; }
   .send .btn { height: 36px; }
   .main { border-radius: var(--radius) 0 0 var(--radius); padding: 0 16px; }
