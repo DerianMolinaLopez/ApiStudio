@@ -47,6 +47,14 @@
   --m-head: #969caa;
   --m-options: #969caa;
 
+  /* Sintaxis del editor */
+  --syn-key: var(--accent-hover);
+  --syn-string: var(--ok);
+  --syn-number: var(--warn);
+  --syn-atom: var(--info);
+  --syn-punct: var(--text-3);
+  --syn-comment: var(--text-3);
+
   /* Muestras del selector de acento (siempre los tonos oscuros) */
   --swatch-violet: #a78bfa;
   --swatch-blue: #60a5fa;
