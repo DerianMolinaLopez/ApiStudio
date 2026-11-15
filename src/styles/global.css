@@ -35,3 +35,35 @@ input, textarea { user-select: text; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; }
 }
+
+/* Controles compartidos */
+.input {
+  height: var(--row-h);
+  padding: 0 10px;
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  min-width: 0;
+  transition: border-color var(--dur-fast);
+}
+.input:hover { border-color: var(--border-strong); }
+.input:focus { outline: none; border-color: var(--accent); }
+.input::placeholder { color: var(--text-3); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: var(--row-h); padding: 0 12px;
+  border-radius: var(--radius); border: 1px solid var(--border);
+  background: var(--elevated); color: var(--text);
+  transition: background var(--dur-fast), border-color var(--dur-fast);
+}
+.btn:hover { background: var(--hover); border-color: var(--border-strong); }
+.btn.primary { background: var(--accent); border-color: transparent; color: var(--accent-contrast); font-weight: 600; }
+.btn.primary:hover { background: var(--accent-hover); }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--text-2); }
+.btn.ghost:hover { background: var(--hover); color: var(--text); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.icon-btn { width: 26px; height: 26px; display: inline-grid; place-items: center; border-radius: var(--radius-sm); color: var(--text-2); transition: background var(--dur-fast), color var(--dur-fast); }
+.icon-btn:hover { background: var(--hover); color: var(--text); }
