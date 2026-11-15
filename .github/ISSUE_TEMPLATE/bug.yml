@@ -1,0 +1,26 @@
+name: Reportar un error
+description: Algo no funciona como esperabas
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "⚠️ No pegues tokens, contraseñas ni datos privados en el reporte."
+  - type: textarea
+    id: que
+    attributes: { label: ¿Qué pasó?, description: Describe el error y qué esperabas que ocurriera }
+    validations: { required: true }
+  - type: textarea
+    id: pasos
+    attributes: { label: Pasos para reproducirlo, placeholder: "1. Abrir...\n2. Enviar...\n3. Ver..." }
+    validations: { required: true }
+  - type: input
+    id: version
+    attributes: { label: Versión de ApiStudio, placeholder: "0.1.0" }
+    validations: { required: true }
+  - type: input
+    id: so
+    attributes: { label: Sistema operativo, placeholder: "Fedora 44 / Windows 11 / Ubuntu 24.04" }
+    validations: { required: true }
+  - type: textarea
+    id: extra
+    attributes: { label: Capturas o logs, description: Arrastra imágenes aquí. Si usas la terminal, pega la salida de `api-studio` }

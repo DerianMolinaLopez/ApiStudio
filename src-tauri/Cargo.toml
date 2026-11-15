@@ -3,6 +3,9 @@ name = "api-studio"
 version = "0.1.0"
 description = "Cliente HTTP de escritorio, local y sin nube"
 edition = "2021"
+license = "MIT"
+authors = ["Derian Molina Lopez"]
+repository = "https://github.com/DerianMolinaLopez/ApiStudio"
 
 [lib]
 name = "api_studio_lib"
