@@ -5,6 +5,7 @@
   import EnvironmentsPanel from './features/sidebar/EnvironmentsPanel.svelte';
   import EnvironmentDialog from './features/sidebar/EnvironmentDialog.svelte';
   import HistoryPanel from './features/sidebar/HistoryPanel.svelte';
+  import ImportDialog from './features/import/ImportDialog.svelte';
   import SaveDialog from './features/sidebar/SaveDialog.svelte';
   import SettingsDialog from './features/settings/SettingsDialog.svelte';
   import Welcome from './features/welcome/Welcome.svelte';
@@ -21,6 +22,7 @@
 
   let view = $state<View>('collections');
   let showSettings = $state(false);
+  let showImport = $state(false);
   let editingEnv = $state<Environment | null>(null);
 
   onMount(() => {
@@ -46,7 +48,7 @@
 <div class="app">
   <Sidebar bind:view counts={{ collections: countRequests(collections.nodes), environments: envs.items.length, history: history.items.length }} onsettings={() => (showSettings = true)}>
     {#if view === 'collections'}
-      <CollectionsPanel />
+      <CollectionsPanel onimport={() => (showImport = true)} />
     {:else if view === 'environments'}
       <EnvironmentsPanel onedit={(e) => (editingEnv = e)} />
     {:else}
@@ -57,12 +59,13 @@
     {#if tabs.items.length}
       <Workbench />
     {:else}
-      <Welcome onnew={newTab} onimport={() => {}} />
+      <Welcome onnew={newTab} onimport={() => (showImport = true)} />
     {/if}
   </main>
 </div>
 
 {#if showSettings}<SettingsDialog onclose={() => (showSettings = false)} />{/if}
+{#if showImport}<ImportDialog onclose={() => (showImport = false)} />{/if}
 {#if editingEnv}<EnvironmentDialog env={editingEnv} onclose={() => (editingEnv = null)} />{/if}
 <SaveDialog />
 <DialogHost />
