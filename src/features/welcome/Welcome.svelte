@@ -4,7 +4,7 @@
 </script>
 
 <section>
-  <div class="mark"><Icon name="bolt" size={44} stroke={1.5} /></div>
+  <div class="mark"><Icon name="exchange" size={44} stroke={1.5} /></div>
   <h1>Bienvenido a API Studio</h1>
   <p>Un cliente HTTP moderno para desarrolladores. Todo se guarda en tu equipo.</p>
   <button class="primary" onclick={onnew}><Icon name="send" size={15} /> Crear una solicitud</button>
