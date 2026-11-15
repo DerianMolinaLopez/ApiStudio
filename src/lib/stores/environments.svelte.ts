@@ -64,8 +64,10 @@ export function setVars(changes: Record<string, string>): void {
   if (!env) return void Object.assign(session, changes);
   for (const k of keys) {
     const v = env.variables.find((x) => x.key === k);
-    if (v) (v.value = changes[k]), (v.enabled = true);
-    else env.variables.push(newKV(k, changes[k]));
+    if (v) {
+      v.value = changes[k];
+      v.enabled = true;
+    } else env.variables.push(newKV(k, changes[k]));
   }
   saveEnvironment(env).catch(() => {});
 }

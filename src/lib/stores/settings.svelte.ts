@@ -41,7 +41,8 @@ export const settings = $state<Settings>(load());
 const media = window.matchMedia('(prefers-color-scheme: dark)');
 
 function resolveScheme(pref: SchemePref): 'dark' | 'light' {
-  return pref === 'system' ? (media.matches ? 'dark' : 'light') : pref;
+  if (pref !== 'system') return pref;
+  return media.matches ? 'dark' : 'light';
 }
 
 function apply(): void {

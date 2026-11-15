@@ -26,19 +26,18 @@ function importAuth(a: Any | undefined): AuthModel {
   return { type: 'none' };
 }
 
-function importRequest(name: string, r: Any): RequestModel {
-  const raw = typeof r.url === 'string' ? r.url : (r.url?.raw ?? '');
-  const method = String(r.method ?? 'GET').toUpperCase() as Method;
-  const req = newRequest({ name, method: METHODS.includes(method) ? method : 'GET', url: raw, headers: kvList(r.header), auth: importAuth(r.auth) });
-  req.params = paramsFromUrl(raw, []);
-  const b = r.body;
+const RAW_TYPES: Record<string, string> = { xml: 'application/xml', html: 'text/html', javascript: 'application/javascript' };
+
+function importBody(req: RequestModel, b: Any | undefined): void {
   if (b?.mode === 'raw') {
-    const lang = b.options?.raw?.language;
-    if (lang === 'json') (req.body.mode = 'json'), (req.body.json = b.raw ?? '');
-    else {
+    const lang = String(b.options?.raw?.language);
+    if (lang === 'json') {
+      req.body.mode = 'json';
+      req.body.json = b.raw ?? '';
+    } else {
       req.body.mode = 'raw';
       req.body.raw = b.raw ?? '';
-      req.body.rawType = lang === 'xml' ? 'application/xml' : lang === 'html' ? 'text/html' : lang === 'javascript' ? 'application/javascript' : 'text/plain';
+      req.body.rawType = RAW_TYPES[lang] ?? 'text/plain';
     }
   } else if (b?.mode === 'urlencoded') {
     req.body.mode = 'urlencoded';
@@ -50,6 +49,14 @@ function importRequest(name: string, r: Any): RequestModel {
       kind: f.type === 'file' ? 'file' : 'text',
     }));
   }
+}
+
+function importRequest(name: string, r: Any): RequestModel {
+  const raw = typeof r.url === 'string' ? r.url : (r.url?.raw ?? '');
+  const method = String(r.method ?? 'GET').toUpperCase() as Method;
+  const req = newRequest({ name, method: METHODS.includes(method) ? method : 'GET', url: raw, headers: kvList(r.header), auth: importAuth(r.auth) });
+  req.params = paramsFromUrl(raw, []);
+  importBody(req, r.body);
   return req;
 }
 
@@ -90,11 +97,13 @@ function exportAuth(a: AuthModel): Any | undefined {
   }
 }
 
+const rawLanguage = (rawType: string): string => ['xml', 'html', 'javascript'].find((l) => rawType.includes(l)) ?? 'text';
+
 function exportRequest(r: RequestModel): Any {
   const b = r.body;
   let body: Any | undefined;
   if (b.mode === 'json') body = { mode: 'raw', raw: b.json, options: { raw: { language: 'json' } } };
-  else if (b.mode === 'raw') body = { mode: 'raw', raw: b.raw, options: { raw: { language: b.rawType.includes('xml') ? 'xml' : b.rawType.includes('html') ? 'html' : b.rawType.includes('javascript') ? 'javascript' : 'text' } } };
+  else if (b.mode === 'raw') body = { mode: 'raw', raw: b.raw, options: { raw: { language: rawLanguage(b.rawType) } } };
   else if (b.mode === 'urlencoded') body = { mode: 'urlencoded', urlencoded: pmKV(b.urlencoded) };
   else if (b.mode === 'form-data')
     body = { mode: 'formdata', formdata: b.formData.filter((f) => f.key).map((f) => ({ key: f.key, type: f.kind, ...(f.kind === 'file' ? { src: f.value } : { value: f.value }), ...(f.enabled ? {} : { disabled: true }) })) };
