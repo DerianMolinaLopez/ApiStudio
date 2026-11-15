@@ -1,7 +1,7 @@
 import { uid } from '../id';
 import { workspace } from '../tauri';
 import type { KV } from '../types';
-import type { Vars } from '../request';
+import { newKV, type Vars } from '../request';
 
 export interface Environment {
   id: string;
@@ -10,6 +10,9 @@ export interface Environment {
 }
 
 const ACTIVE_KEY = 'api-studio:active-env';
+
+/** Variables creadas por scripts cuando no hay entorno activo (viven solo en la sesión). */
+const session = $state<Record<string, string>>({});
 
 export const envs = $state<{ items: Environment[]; activeId: string | null }>({ items: [], activeId: null });
 
@@ -33,7 +36,7 @@ export function activeEnv(): Environment | undefined {
 export function activeVars(): Vars {
   const out: Vars = {};
   for (const v of activeEnv()?.variables ?? []) if (v.enabled && v.key) out[v.key] = v.value;
-  return out;
+  return { ...session, ...out };
 }
 
 export const newEnvironment = (name = 'Nuevo entorno'): Environment => ({ id: uid(), name, variables: [] });
@@ -51,4 +54,18 @@ export async function removeEnvironment(id: string): Promise<void> {
   await workspace.deleteEnvironment(id);
   envs.items = envs.items.filter((e) => e.id !== id);
   if (envs.activeId === id) setActiveEnvironment(null);
+}
+
+/** Aplica variables fijadas por un script: al entorno activo (y se guarda) o a la sesión. */
+export function setVars(changes: Record<string, string>): void {
+  const keys = Object.keys(changes);
+  if (!keys.length) return;
+  const env = activeEnv();
+  if (!env) return void Object.assign(session, changes);
+  for (const k of keys) {
+    const v = env.variables.find((x) => x.key === k);
+    if (v) (v.value = changes[k]), (v.enabled = true);
+    else env.variables.push(newKV(k, changes[k]));
+  }
+  saveEnvironment(env).catch(() => {});
 }
