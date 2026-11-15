@@ -24,9 +24,9 @@ ApiStudio sirve para desarrollar y probar APIs sin depender de un servicio exter
 
 | Sistema | Archivo | Instalar |
 | --- | --- | --- |
-| Fedora / RHEL / openSUSE | [`ApiStudio-0.1.1-1.x86_64.rpm`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.1/ApiStudio-0.1.1-1.x86_64.rpm) | `sudo dnf install ./ApiStudio-0.1.1-1.x86_64.rpm` |
+| Fedora / RHEL / openSUSE | [`ApiStudio-0.1.2-1.x86_64.rpm`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.2/ApiStudio-0.1.2-1.x86_64.rpm) | `sudo dnf install ./ApiStudio-0.1.2-1.x86_64.rpm` |
 | Windows 10/11 | Instalador `.exe` (o `.msi`) en [Releases](https://github.com/DerianMolinaLopez/ApiStudio/releases/latest) | Doble clic. Se instala para tu usuario, sin permisos de administrador |
-| Debian / Ubuntu | [`ApiStudio_0.1.1_amd64.deb`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.1/ApiStudio_0.1.1_amd64.deb) | `sudo apt install ./ApiStudio_0.1.1_amd64.deb` |
+| Debian / Ubuntu | [`ApiStudio_0.1.2_amd64.deb`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.2/ApiStudio_0.1.2_amd64.deb) | `sudo apt install ./ApiStudio_0.1.2_amd64.deb` |
 
 Después abre **ApiStudio** desde el menú de aplicaciones o ejecuta `api-studio`.
 
