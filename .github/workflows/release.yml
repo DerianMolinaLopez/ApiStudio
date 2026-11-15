@@ -1,0 +1,38 @@
+name: Release (Windows)
+
+# Construye los instaladores de Windows (.exe y .msi) y los adjunta a la release del tag.
+# Se dispara al publicar un tag v*; también se puede lanzar a mano indicando el tag.
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag de la release a la que se adjuntan los instaladores (p. ej. v0.1.2)
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with: { node-version: 20, cache: npm }
+      - uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+        with: { workspaces: src-tauri }
+      - run: npm ci --ignore-scripts
+      - uses: tauri-apps/tauri-action@84b9d35b5fc46c1e45415bdb6144030364f7ebc5 # v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tauriScript: npm run tauri
+          tagName: ${{ inputs.tag || github.ref_name }}
+          releaseName: ApiStudio ${{ inputs.tag || github.ref_name }}
+          releaseDraft: false
+          args: --bundles nsis,msi

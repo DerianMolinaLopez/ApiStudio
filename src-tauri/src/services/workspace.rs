@@ -35,7 +35,22 @@ pub fn sanitize(name: &str) -> String {
         .map(|c| if matches!(c, '/' | '\\' | ':' | '*' | '?' | '"' | '<' | '>' | '|') || c.is_control() { '-' } else { c })
         .collect();
     let t = cleaned.trim().trim_matches('.').trim();
-    if t.is_empty() { "Sin nombre".into() } else { t.to_owned() }
+    if t.is_empty() {
+        "Sin nombre".into()
+    } else if is_reserved_windows_name(t) {
+        format!("{t}_")
+    } else {
+        t.to_owned()
+    }
+}
+
+/// Nombres de dispositivo que Windows no permite como archivo, con o sin extensión (CON, NUL, COM1…).
+fn is_reserved_windows_name(name: &str) -> bool {
+    let stem = name.split('.').next().unwrap_or(name).to_ascii_uppercase();
+    matches!(stem.as_str(), "CON" | "PRN" | "AUX" | "NUL")
+        || ["COM", "LPT"].iter().any(|p| {
+            stem.strip_prefix(p).is_some_and(|n| n.len() == 1 && matches!(n.as_bytes()[0], b'1'..=b'9'))
+        })
 }
 
 fn write_atomic(path: &Path, content: &str) -> AppResult<()> {
@@ -325,6 +340,12 @@ mod tests {
         assert!(w.delete("/tmp").is_err());
         assert_eq!(sanitize("a/b:c"), "a-b-c");
         assert_eq!(sanitize("  .. "), "Sin nombre");
+        // nombres reservados de Windows
+        assert_eq!(sanitize("CON"), "CON_");
+        assert_eq!(sanitize("com1"), "com1_");
+        assert_eq!(sanitize("nul.txt"), "nul.txt_");
+        assert_eq!(sanitize("COM10"), "COM10");
+        assert_eq!(sanitize("Console"), "Console");
     }
 
     #[test]

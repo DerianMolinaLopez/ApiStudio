@@ -26,6 +26,10 @@
   "bundle": {
     "active": true,
     "targets": ["deb", "rpm", "appimage", "msi", "nsis"],
+    "windows": {
+      "nsis": { "installMode": "currentUser", "languages": ["Spanish", "English"] },
+      "webviewInstallMode": { "type": "downloadBootstrapper" }
+    },
     "category": "DeveloperTool",
     "license": "MIT",
     "licenseFile": "../LICENSE",
