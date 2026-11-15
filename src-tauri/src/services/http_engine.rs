@@ -13,7 +13,9 @@ use tokio::task::AbortHandle;
 
 use crate::{
     error::{AppError, AppResult},
-    models::http::*,
+    models::http::{
+        FormPart, Header, HttpRequest, HttpResponse, PartKind, RequestBody, RequestOptions, ResponseCookie,
+    },
 };
 
 type ClientKey = (bool, bool); // (follow_redirects, verify_tls)

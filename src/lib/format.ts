@@ -37,11 +37,11 @@ export function prettyJson(text: string): string | null {
 /** Indentador XML simple (suficiente para legibilidad; no valida). */
 export function prettyXml(text: string): string | null {
   if (text.length > PRETTY_LIMIT || !text.trimStart().startsWith('<')) return null;
-  const tokens = text.replace(/>\s+</g, '><').trim().replace(/></g, '>\n<').split('\n');
+  const tokens = text.replace(/>\s+</g, '><').trim().replaceAll('><', '>\n<').split('\n');
   let depth = 0;
   const out: string[] = [];
   for (const t of tokens) {
-    if (/^<\//.test(t)) depth = Math.max(0, depth - 1);
+    if (t.startsWith('</')) depth = Math.max(0, depth - 1);
     out.push('  '.repeat(depth) + t);
     if (/^<[^!?/][^>]*[^/]>$/.test(t) && !/<\/[^>]+>$/.test(t)) depth++;
   }

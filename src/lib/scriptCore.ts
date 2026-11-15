@@ -73,7 +73,8 @@ export function makeExpect(actual: unknown) {
       toHaveLength: (n: number) => check((actual as any)?.length === n, `tuviera longitud ${n}`),
       toHaveProperty: (path: string, value?: unknown) => {
         const r = getPath(actual, path);
-        check(r.found && (value === undefined || deepEqual(r.value, value)), `tuviera la propiedad «${path}»${value === undefined ? '' : ` = ${fmt(value)}`}`);
+        const expected = value === undefined ? '' : ` = ${fmt(value)}`;
+        check(r.found && (value === undefined || deepEqual(r.value, value)), `tuviera la propiedad «${path}»${expected}`);
       },
     };
   };
@@ -87,7 +88,9 @@ export async function runScript(code: string, ctx: ScriptContext): Promise<Scrip
   const varChanges: Record<string, string> = {};
   const headers: { key: string; value: string }[] = [];
 
-  const log = (...a: unknown[]) => void logs.push(a.map(fmt).join(' '));
+  const log = (...a: unknown[]) => {
+    logs.push(a.map(fmt).join(' '));
+  };
   const consoleApi = { log, info: log, warn: log, error: log };
   const env = {
     get: (k: string) => vars[k],
@@ -98,7 +101,9 @@ export async function runScript(code: string, ctx: ScriptContext): Promise<Scrip
   const request = ctx.request && {
     method: ctx.request.method,
     url: ctx.request.url,
-    setHeader: (key: string, value: unknown) => void headers.push({ key, value: String(value) }),
+    setHeader: (key: string, value: unknown) => {
+      headers.push({ key, value: String(value) });
+    },
   };
   const response = ctx.response && {
     status: ctx.response.status,

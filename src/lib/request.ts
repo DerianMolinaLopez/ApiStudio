@@ -22,7 +22,7 @@ export function newRequest(partial: Partial<RequestModel> = {}): RequestModel {
 }
 
 // ── Variables {{nombre}} ────────────────────────────────────────────────
-const VAR_RE = /\{\{\s*([\w.\-]+)\s*\}\}/g;
+const VAR_RE = /\{\{\s*([\w.-]+)\s*\}\}/g;
 
 export type Vars = Record<string, string>;
 
@@ -54,7 +54,7 @@ const encodePart = (s: string) =>
 
 const safeDecode = (s: string) => {
   try {
-    return decodeURIComponent(s.replace(/\+/g, ' '));
+    return decodeURIComponent(s.replaceAll('+', ' '));
   } catch {
     return s;
   }
@@ -65,6 +65,12 @@ export function buildQuery(params: KV[]): string {
     .filter((p) => p.enabled && p.key !== '')
     .map((p) => (p.value === '' ? encodePart(p.key) : `${encodePart(p.key)}=${encodePart(p.value)}`))
     .join('&');
+}
+
+/** Añade `extra` (p. ej. `k=v`) al final de la query existente, antes del #hash. */
+export function appendQuery(url: string, extra: string): string {
+  const { base, query, hash } = splitUrl(url);
+  return `${base}?${[query, extra].filter(Boolean).join('&')}${hash}`;
 }
 
 /** Nueva URL con la query reconstruida desde la tabla de parámetros. */
@@ -97,7 +103,7 @@ export function paramsFromUrl(url: string, existing: KV[]): KV[] {
 function basicToken(user: string, pass: string): string {
   const bytes = new TextEncoder().encode(`${user}:${pass}`);
   let bin = '';
-  bytes.forEach((b) => (bin += String.fromCharCode(b)));
+  bytes.forEach((b) => (bin += String.fromCodePoint(b)));
   return btoa(bin);
 }
 
@@ -127,9 +133,8 @@ export function buildEngineRequest(req: RequestModel, o: BuildOptions): EngineRe
   let url = interpolate(req.url.trim(), vars);
 
   if (req.auth.type === 'apikey' && req.auth.in === 'query' && req.auth.key) {
-    const { base, query, hash } = splitUrl(url);
     const extra = `${encodePart(interpolate(req.auth.key, vars))}=${encodePart(interpolate(req.auth.value, vars))}`;
-    url = `${base}?${query ? `${query}&` : ''}${extra}${hash}`;
+    url = appendQuery(url, extra);
   }
 
   const headers = req.headers
@@ -170,22 +175,26 @@ export function buildEngineRequest(req: RequestModel, o: BuildOptions): EngineRe
 }
 
 // ── cURL ────────────────────────────────────────────────────────────────
-const q = (s: string) => `'${s.replace(/'/g, `'\\''`)}'`;
+const SQ_ESCAPE = String.raw`'\''`;
+const q = (s: string) => `'${s.replaceAll("'", SQ_ESCAPE)}'`;
+
+function curlBodyArgs(req: EngineRequest): string[] {
+  const b = req.body;
+  if (b.type === 'raw') {
+    const needsType = b.contentType && !req.headers.some((h) => h.key.toLowerCase() === 'content-type');
+    return [...(needsType ? ['-H', q(`Content-Type: ${b.contentType}`)] : []), '--data-raw', q(b.content)];
+  }
+  if (b.type === 'form') return b.fields.flatMap((f) => ['--data-urlencode', q(`${f.key}=${f.value}`)]);
+  if (b.type === 'multipart') return b.fields.flatMap((f) => ['-F', q(f.kind === 'file' ? `${f.key}=@${f.value}` : `${f.key}=${f.value}`)]);
+  return [];
+}
 
 export function toCurl(req: EngineRequest): string {
   const parts = ['curl'];
   if (req.method !== 'GET') parts.push('-X', req.method);
   parts.push(q(req.url));
   for (const h of req.headers) parts.push('-H', q(`${h.key}: ${h.value}`));
-  const b = req.body;
-  if (b.type === 'raw') {
-    if (b.contentType && !req.headers.some((h) => h.key.toLowerCase() === 'content-type')) parts.push('-H', q(`Content-Type: ${b.contentType}`));
-    parts.push('--data-raw', q(b.content));
-  } else if (b.type === 'form') {
-    for (const f of b.fields) parts.push('--data-urlencode', q(`${f.key}=${f.value}`));
-  } else if (b.type === 'multipart') {
-    for (const f of b.fields) parts.push('-F', q(f.kind === 'file' ? `${f.key}=@${f.value}` : `${f.key}=${f.value}`));
-  }
+  parts.push(...curlBodyArgs(req));
   if (!req.options.followRedirects) parts.push('--max-redirs', '0');
   else parts.push('-L');
   if (!req.options.verifyTls) parts.push('-k');

@@ -69,7 +69,7 @@
   });
 
   const varMatcher = new MatchDecorator({
-    regexp: /\{\{\s*([\w.\-]+)\s*\}\}/g,
+    regexp: /\{\{\s*([\w.-]+)\s*\}\}/g,
     decoration: (m, v) =>
       Decoration.mark({ class: m[1] in v.state.facet(varsFacet) ? 'cm-var' : 'cm-var-missing' }),
   });
