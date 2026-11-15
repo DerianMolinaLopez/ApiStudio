@@ -1,6 +1,7 @@
 import { uid } from '../id';
 import { historyApi } from '../tauri';
 import type { HistoryEntry } from '../types';
+import { redactRequest, redactUrl } from '../redact';
 import { onSent } from './tabs.svelte';
 
 export const history = $state<{ items: HistoryEntry[] }>({ items: [] });
@@ -27,11 +28,12 @@ export function trackHistory(): void {
       id: uid(),
       ts: Date.now(),
       method: tab.request.method,
-      url: sent.url,
+      url: redactUrl(sent.url),
       status: res.status,
       timeMs: res.timeMs,
       sizeBytes: res.sizeBytes,
-      request: $state.snapshot(tab.request) as HistoryEntry['request'],
+      // El historial nunca guarda credenciales: se reabre sin contraseña/token.
+      request: redactRequest($state.snapshot(tab.request) as HistoryEntry['request']),
     };
     history.items.unshift(entry);
     if (history.items.length > 300) history.items.length = 300;
