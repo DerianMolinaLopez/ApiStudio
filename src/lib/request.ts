@@ -48,7 +48,7 @@ export function splitUrl(url: string): { base: string; query: string; hash: stri
 
 const encodePart = (s: string) =>
   s
-    .split(/(\{\{[^}]*\}\})/)
+    .split(/(\{\{[^{}]*\}\})/)
     .map((seg, i) => (i % 2 ? seg : encodeURIComponent(seg)))
     .join('');
 

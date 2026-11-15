@@ -143,7 +143,7 @@ export function parseCurl(command: string): RequestModel {
 
   req.params = paramsFromUrl(req.url, []);
   try {
-    const u = new URL(req.url.replace(/\{\{[^}]*\}\}/g, 'x'));
+    const u = new URL(req.url.replace(/\{\{[^{}]*\}\}/g, 'x'));
     req.name = `${req.method} ${u.pathname === '/' ? u.host : u.pathname}`;
   } catch {
     req.name = `${req.method} solicitud`;

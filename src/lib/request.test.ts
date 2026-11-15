@@ -60,3 +60,13 @@ describe('toCurl', () => {
     expect(c).toBe(`curl -X POST 'http://h/x' -H 'Content-Type: application/json' --data-raw '{"a":"it'\\''s"}' -L`);
   });
 });
+
+describe('rendimiento de regex', () => {
+  it('no se degrada con muchas llaves sin cerrar', () => {
+    const t0 = performance.now();
+    const hostile = '{{'.repeat(50000) + 'a';
+    expect(urlWithParams(`http://h?${hostile}`, [])).toBeTypeOf('string');
+    expect(unresolved(hostile, {})).toEqual([]);
+    expect(performance.now() - t0).toBeLessThan(1500);
+  });
+});
