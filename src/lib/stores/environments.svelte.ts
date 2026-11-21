@@ -71,3 +71,11 @@ export function setVars(changes: Record<string, string>): void {
   }
   saveEnvironment(env).catch(() => {});
 }
+
+/** Devuelve `name` o `name (2)`, `name (3)`… si ya existe un entorno con ese nombre (guardan en archivos por nombre). */
+export function uniqueEnvironmentName(name: string): string {
+  const taken = new Set(envs.items.map((e) => e.name.toLowerCase()));
+  let candidate = name;
+  for (let n = 2; taken.has(candidate.toLowerCase()); n++) candidate = `${name} (${n})`;
+  return candidate;
+}
