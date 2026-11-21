@@ -42,7 +42,7 @@ Después abre **ApiStudio** desde el menú de aplicaciones o ejecuta `api-studio
 - **Colecciones y carpetas**: arrastra para reorganizar; cada solicitud es un archivo JSON.
 - **Entornos** con variables `{{nombre}}` en URL, headers y body.
 - **Historial** de solicitudes recientes, con búsqueda.
-- **Importar y exportar**: comandos cURL, colecciones y entornos de Postman (v2.0/2.1) y documentos **OpenAPI 3.x / Swagger 2.0** en JSON (por ejemplo, el `openapi.json` que genera ASP.NET con Swashbuckle); exportar a Postman y copiar como cURL.
+- **Importar y exportar**: comandos cURL, colecciones y entornos de Postman (v2.0/2.1) y documentos **OpenAPI 3.x / Swagger 2.0** en JSON (por ejemplo, el `openapi.json` que genera ASP.NET con Swashbuckle). Puedes **arrastrar el archivo** al cuadro del diálogo de importar o elegirlo desde una ruta; exportar a Postman y copiar como cURL.
 - **Scripts y tests** en JavaScript (pre-request, post-response y aserciones), aislados del sistema.
 - **Temas** Oscuro, Claro y Sistema, con 7 colores de acento.
 
