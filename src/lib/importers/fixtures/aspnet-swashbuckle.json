@@ -1,0 +1,97 @@
+{
+  "openapi": "3.0.1",
+  "info": { "title": "Tienda.Api", "version": "v1" },
+  "paths": {
+    "/api/Auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/LoginRequest" } },
+            "text/json": { "schema": { "$ref": "#/components/schemas/LoginRequest" } },
+            "application/*+json": { "schema": { "$ref": "#/components/schemas/LoginRequest" } }
+          }
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/Productos": {
+      "get": {
+        "tags": ["Productos"],
+        "parameters": [
+          { "name": "pagina", "in": "query", "schema": { "type": "integer", "format": "int32", "default": 1 } },
+          { "name": "buscar", "in": "query", "schema": { "type": "string", "nullable": true } },
+          { "name": "estado", "in": "query", "schema": { "$ref": "#/components/schemas/EstadoProducto" } }
+        ],
+        "responses": { "200": { "description": "OK" } },
+        "security": [{ "Bearer": [] }]
+      },
+      "post": {
+        "tags": ["Productos"],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProductoCrearDto" } } }
+        },
+        "responses": { "201": { "description": "Created" } },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/api/Productos/{id}": {
+      "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" } }],
+      "get": { "tags": ["Productos"], "responses": { "200": { "description": "OK" } }, "security": [{ "Bearer": [] }] },
+      "put": {
+        "tags": ["Productos"],
+        "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProductoCrearDto" } } } },
+        "responses": { "204": { "description": "No Content" } },
+        "security": [{ "Bearer": [] }]
+      },
+      "delete": { "tags": ["Productos"], "responses": { "204": { "description": "No Content" } }, "security": [{ "Bearer": [] }] }
+    },
+    "/api/Productos/{id}/imagen": {
+      "post": {
+        "tags": ["Productos"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" } }],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": { "type": "object", "properties": { "archivo": { "type": "string", "format": "binary" }, "descripcion": { "type": "string" } } }
+            }
+          }
+        },
+        "responses": { "200": { "description": "OK" } },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/health": { "get": { "responses": { "200": { "description": "OK" } } } }
+  },
+  "components": {
+    "schemas": {
+      "EstadoProducto": { "enum": [0, 1, 2], "type": "integer", "format": "int32" },
+      "LoginRequest": {
+        "required": ["email", "password"],
+        "type": "object",
+        "properties": { "email": { "type": "string", "format": "email" }, "password": { "type": "string", "format": "password" } },
+        "additionalProperties": false
+      },
+      "Dimensiones": { "type": "object", "properties": { "alto": { "type": "number", "format": "double" }, "ancho": { "type": "number", "format": "double" } }, "additionalProperties": false },
+      "ProductoCrearDto": {
+        "required": ["nombre"],
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64", "readOnly": true },
+          "nombre": { "type": "string" },
+          "descripcion": { "type": "string", "nullable": true },
+          "precio": { "type": "number", "format": "double" },
+          "estado": { "$ref": "#/components/schemas/EstadoProducto" },
+          "creado": { "type": "string", "format": "date-time" },
+          "externalId": { "type": "string", "format": "uuid" },
+          "dimensiones": { "$ref": "#/components/schemas/Dimensiones" },
+          "etiquetas": { "type": "array", "items": { "type": "string" }, "nullable": true }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": { "type": "http", "description": "JWT", "scheme": "bearer", "bearerFormat": "JWT" }
+    }
+  }
+}

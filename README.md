@@ -24,9 +24,9 @@ ApiStudio sirve para desarrollar y probar APIs sin depender de un servicio exter
 
 | Sistema | Archivo | Instalar |
 | --- | --- | --- |
-| Fedora / RHEL / openSUSE | [`ApiStudio-0.1.2-1.x86_64.rpm`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.2/ApiStudio-0.1.2-1.x86_64.rpm) | `sudo dnf install ./ApiStudio-0.1.2-1.x86_64.rpm` |
-| Windows 10/11 | [`API.Studio_0.1.2_x64-setup.exe`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.2/API.Studio_0.1.2_x64-setup.exe) · [`.msi`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.2/API.Studio_0.1.2_x64_en-US.msi) | Doble clic. Se instala para tu usuario, sin permisos de administrador |
-| Debian / Ubuntu | [`ApiStudio_0.1.2_amd64.deb`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.1.2/ApiStudio_0.1.2_amd64.deb) | `sudo apt install ./ApiStudio_0.1.2_amd64.deb` |
+| Fedora / RHEL / openSUSE | [`ApiStudio-0.2.0-1.x86_64.rpm`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.2.0/ApiStudio-0.2.0-1.x86_64.rpm) | `sudo dnf install ./ApiStudio-0.2.0-1.x86_64.rpm` |
+| Windows 10/11 | [`API.Studio_0.2.0_x64-setup.exe`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.2.0/API.Studio_0.2.0_x64-setup.exe) · [`.msi`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.2.0/API.Studio_0.2.0_x64_en-US.msi) | Doble clic. Se instala para tu usuario, sin permisos de administrador |
+| Debian / Ubuntu | [`ApiStudio_0.2.0_amd64.deb`](https://github.com/DerianMolinaLopez/ApiStudio/releases/download/v0.2.0/ApiStudio_0.2.0_amd64.deb) | `sudo apt install ./ApiStudio_0.2.0_amd64.deb` |
 
 Después abre **ApiStudio** desde el menú de aplicaciones o ejecuta `api-studio`.
 
@@ -42,7 +42,7 @@ Después abre **ApiStudio** desde el menú de aplicaciones o ejecuta `api-studio
 - **Colecciones y carpetas**: arrastra para reorganizar; cada solicitud es un archivo JSON.
 - **Entornos** con variables `{{nombre}}` en URL, headers y body.
 - **Historial** de solicitudes recientes, con búsqueda.
-- **Importar y exportar**: comandos cURL, colecciones y entornos de Postman (v2.0/2.1); exportar a Postman y copiar como cURL.
+- **Importar y exportar**: comandos cURL, colecciones y entornos de Postman (v2.0/2.1) y documentos **OpenAPI 3.x / Swagger 2.0** en JSON (por ejemplo, el `openapi.json` que genera ASP.NET con Swashbuckle); exportar a Postman y copiar como cURL.
 - **Scripts y tests** en JavaScript (pre-request, post-response y aserciones), aislados del sistema.
 - **Temas** Oscuro, Claro y Sistema, con 7 colores de acento.
 
@@ -127,7 +127,7 @@ src-tauri/src/           Backend (Rust)
 
 ## Roadmap
 
-GraphQL, WebSocket, gRPC y SSE · OAuth 2.0 · mock servers · Collection Runner · proxy · imágenes y respuestas binarias · binarios para macOS y firma de los instaladores · cifrar secretos en disco.
+OpenAPI en YAML · GraphQL, WebSocket, gRPC y SSE · OAuth 2.0 · mock servers · Collection Runner · proxy · imágenes y respuestas binarias · binarios para macOS y firma de los instaladores · cifrar secretos en disco.
 
 ## Licencia
 
