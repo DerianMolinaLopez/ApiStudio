@@ -112,18 +112,10 @@
       placeholder ? cmPlaceholder(placeholder) : [],
     ];
     if (singleLine) {
-      // Va primero: en CodeMirror las extensiones anteriores tienen prioridad, así que debe ir antes del tema base.
-      extensions.unshift(
-        EditorView.theme({
-          '.cm-content': { padding: '0' },
-          '.cm-line': { padding: '0' },
-          '.cm-scroller': { lineHeight: '28px', overflowY: 'hidden', scrollbarWidth: 'none' },
-          '.cm-scroller::-webkit-scrollbar': { display: 'none' },
-        }),
-      );
       extensions.push(
         EditorState.transactionFilter.of((tr) => (tr.newDoc.lines > 1 ? [] : tr)),
         keymap.of([{ key: 'Enter', run: () => (onsubmit?.(), true) }]),
+        EditorView.theme({ '.cm-content': { padding: '0' }, '.cm-scroller': { lineHeight: '28px' } }),
       );
     } else {
       extensions.push(

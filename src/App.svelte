@@ -43,12 +43,7 @@
   }
 </script>
 
-<!-- Soltar un archivo fuera de una zona de importación no debe hacer que la ventana navegue hacia él. -->
-<svelte:window
-  onkeydown={onkey}
-  ondragover={(e) => e.dataTransfer?.types.includes('Files') && e.preventDefault()}
-  ondrop={(e) => e.dataTransfer?.types.includes('Files') && e.preventDefault()}
-/>
+<svelte:window onkeydown={onkey} />
 
 <div class="app">
   <Sidebar bind:view counts={{ collections: countRequests(collections.nodes), environments: envs.items.length, history: history.items.length }} onsettings={() => (showSettings = true)}>
